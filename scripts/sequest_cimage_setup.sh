@@ -19,6 +19,7 @@ function usage {
 	echo 's3: Human ReDiMe H L'
 	echo 's4: Human ReDiMe H L IA H L red_diffMod'
 	echo 's5: Human ReDiMe H L IA H L ox_diffMod'
+	echo 's6: Human IAH IAL azo'
 	echo -e '\nAvailable options:'
 	echo '-l 1 : Create hard links to ms2 files in heavy folder (default).'
 	echo '-l 0 : Do not link .ms2 files, create hard copies instead.'
@@ -128,6 +129,9 @@ case $paramsFiles in
 	"s5")
 		heavyParams="$ppdir/ReDiMe_H_L_IA_H_L_ox_diffMod/heavy/sequest.params"
 		lightParams="$ppdir/ReDiMe_H_L_IA_H_L_ox_diffMod/light/sequest.params" ;;
+	"s6")
+		heavyParams="$ppdir/IAH_IAL_azo/heavy/sequest.params"
+		lightParams="$ppdir/IAH_IAL_azo/light/sequest.params" ;;
 	*)
 		echo "$paramsFiles is not a valid option."
 		exit
