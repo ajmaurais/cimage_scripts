@@ -1,0 +1,107 @@
+
+#default args
+wd=$(pwd)
+prefix="DTASelect-filter_"
+suffix="_heavy.txt"
+pbsName="cimage.pbs"
+mem="12"
+nodes="1"
+ppn="1"
+walltime="12:00:00"
+paramsFile="~/cimage_new/SILAC_R10_K6.params"
+cbp="1"
+hl=false
+
+function usage {
+	echo -e '\nusage: cimpbs [-cbp <-1|0|1>] [-hl] [-p <paramsFile>]'
+	echo
+	exit
+}
+
+#checks that $1 is not empty or a flag
+function isArg {
+	if [[ $1 == -* ]] || [[ -z "$1" ]] ; then
+		usage
+	fi
+}
+
+function absPath {
+	if [ -d "$1" ]; then
+		( cd "$1"; echo $(dirs -l +0)"/")
+	else
+		( cd "$(dirname "$1")"; d=$(dirs -l +0); echo "${d%/}/${1##*}" )
+	fi
+}
+
+#initialize .pbs file in dir $1 to start in dir $2
+function initPBS {
+	echo '#!/bin/tcsh' > $1/$pbsName
+	echo '#PBS -l mem='$mem'gb,nodes='$nodes':ppn='$ppn',walltime='$walltime >> $1/$pbsName
+	echo -e '\nmodule load base torque sequest' >> $1/$pbsName
+	echo -e '\ncd '$2'\n' >> $1/$pbsName
+	echo -n 'cimage '$paramsFile' ' >> $1/$pbsName
+}
+
+#get args
+while ! [[ -z "$1" ]] ; do
+	case $1 in
+		"-p")
+			shift
+			isArg "$1"
+			paramsFile="$1" ;;
+		"-cbp")
+			shift
+			isArg "$1"
+			cbp="$1" ;;
+		"-hl")
+			hl=true ;;
+		"-h")
+			usage ;;
+		*)
+			echo "$1 is an invalid arg."
+			exit
+	esac
+	shift
+done
+
+#get dest and dta dir names
+if [ $(ls -l $wd/*.mzXML 2>/dev/null | wc -l) -gt 0 ] && [ -d dta ] ; then
+	destDir=$wd
+	dtaDir=$wd/dta
+elif [ $(basename $wd) == "dta" ] ; then
+	destDir=$(absPath ../)
+	dtaDir=$wd
+else
+	echo "Bad dir! Exiting..."
+	exit
+fi
+
+#get all sample names and generate pbs file
+cd $dtaDir
+initPBS $destDir $dtaDir $paramsFile
+for s in $(ls -1|grep ^DTASelect-filter_\..*_heavy.txt$) ; do
+	sname=${s#$prefix}
+	sname=${sname%$suffix}
+
+	if $hl ; then
+		sname=$sname"_HL"
+	fi
+
+	echo "Adding $sname..."
+	echo -n "$sname " >> $destDir/$pbsName
+done
+echo -e '> cimageOut.txt\n' >> $destDir/$pbsName
+echo -e 'cd ..\n' >> $destDir/$pbsName
+
+case $cbp in
+	"1")
+		echo -e 'cimage_combine by_protein output_rt_10_sn_2.5.to_excel.txt dta\n' >> $destDir/$pbsName ;;
+	"0")
+		echo -e 'cimage_combine output_rt_10_sn_2.5.to_excel.txt dta\n' >> $destDir/$pbsName ;;
+	"-1")
+		exit ;;
+	*)
+		echo "Invalid option for cbp"
+		exit ;;
+esac
+
