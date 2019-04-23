@@ -161,9 +161,9 @@ if $qsubAll ; then
 	for d in $heavyName $lightName ; do
 		cd $d
 		if $qsubAllForce ; then
-			bash ~/scripts/qsubmit.sh -f
+			qsub_all -f
 		else
-			bash ~/scripts/qsubmit.sh
+			qsub_all	
 		fi
 		cd ..
 	done
