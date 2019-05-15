@@ -1,0 +1,27 @@
+#!/bin/bash
+
+rm -fv ./combined_dta.html
+rm -fv ./combined_dta.png
+rm -fv ./combined_dta.txt
+rm -fv ./combined_dta.Rout
+rm -fv ./combined_dta.vennDiagram.png
+rm -fv cimage.pbs.e*
+rm -fv cimage.pbs.o*
+
+if [ -d dta ]; then
+	cd dta
+	rm -fv cross_scan.table
+	rm -fv cimageOut.txt
+	rm -fv all_scan.table
+	rm -fv ipi_name.table
+	rm -fv findMs1AcrossSetsFromDTASelect.Rout
+	rm -fv ./*.txt.tagged
+	rm -rf Rplots.pdf
+	if [ -f output ] ; then
+		echo "Removing output..."
+		rm -rf output
+		echo "Done!"
+	fi
+fi
+
+
