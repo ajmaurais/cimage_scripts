@@ -18,10 +18,11 @@ function usage {
 	echo 's1: Human SILAC R10 K6'
 	echo 's2: Human SILAC R10 K8'
 	echo 's3: Human ReDiMe H L'
-	echo 's4: Human ReDiMe H L IA H L red_diffMod'
-	echo 's5: Human ReDiMe H L IA H L ox_diffMod'
-	echo 's6: Human IAH IAL azo'
-	echo 's7: Mouse IAH IAL azo'
+	echo 's4: Human ReDiMe H L light NaBH3CN'
+	echo 's5: Human ReDiMe H L IA H L red_diffMod'
+	echo 's6: Human ReDiMe H L IA H L ox_diffMod'
+	echo 's7: Human IAH IAL azo'
+	echo 's8: Mouse IAH IAL azo'
 	echo -e '\nAvailable options:'
 	echo '-l 1 : Create hard links to ms2 files in heavy folder (default).'
 	echo '-l 0 : Do not link .ms2 files, create hard copies instead.'
@@ -126,15 +127,18 @@ case $paramsFiles in
 		heavyParams="$ppdir/ReDiMe_H_L/heavy/sequest.params"
 		lightParams="$ppdir/ReDiMe_H_L/light/sequest.params" ;;
 	"s4")
+		heavyParams="$ppdir/ReDiMe_H_L_light_NaBH3CN/heavy/sequest.params"
+		lightParams="$ppdir/ReDiMe_H_L_light_NaBH3CN/light/sequest.params" ;;
+	"s5")
 		heavyParams="$ppdir/ReDiMe_H_L_IA_H_L_red_diffMod/heavy/sequest.params"
 		lightParams="$ppdir/ReDiMe_H_L_IA_H_L_red_diffMod/light/sequest.params" ;;
-	"s5")
+	"s6")
 		heavyParams="$ppdir/ReDiMe_H_L_IA_H_L_ox_diffMod/heavy/sequest.params"
 		lightParams="$ppdir/ReDiMe_H_L_IA_H_L_ox_diffMod/light/sequest.params" ;;
-	"s6")
+	"s7")
 		heavyParams="$ppdir/IAH_IAL_azo/heavy/sequest.params"
 		lightParams="$ppdir/IAH_IAL_azo/light/sequest.params" ;;
-	"s7")
+	"s8")
 		heavyParams="$ppdir/mouse_IAH_IAL_azo/heavy/sequest.params"
 		lightParams="$ppdir/mouse_IAH_IAL_azo/light/sequest.params" ;;
 	*)
