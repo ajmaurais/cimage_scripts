@@ -1,10 +1,6 @@
 #!/bin/bash
 
-rm -fv ./combined_dta.html
-rm -fv ./combined_dta.png
-rm -fv ./combined_dta.txt
-rm -fv ./combined_dta.Rout
-rm -fv ./combined_dta.vennDiagram.png
+rm -fv ./combined_*
 rm -fv cimage.pbs.e*
 rm -fv cimage.pbs.o*
 
@@ -16,12 +12,12 @@ if [ -d dta ]; then
 	rm -fv ipi_name.table
 	rm -fv findMs1AcrossSetsFromDTASelect.Rout
 	rm -fv ./*.txt.tagged
+	rm -fv ./*.txt.tmp*
+	rm -fv ./tmp.*	
 	rm -rf Rplots.pdf
-	if [ -f output ] ; then
-		echo "Removing output..."
-		rm -rf output
-		echo "Done!"
-	fi
+	echo "Removing output..."
+	rm -rf output
+	echo "Done!"
 fi
 
 
