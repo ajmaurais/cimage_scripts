@@ -9,12 +9,12 @@ mem="12"
 nodes="1"
 ppn="1"
 walltime="12:00:00"
-paramsFile="~/cimage_new/SILAC_R10_K6.params"
-cbp="1"
+paramsFile=""
+cbp="0"
 hl=false
 
 function usage {
-	echo -e '\nusage: cimpbs [-cbp <-1|0|1>] [-hl] [-p <paramsFile>]'
+	echo -e '\nusage: cimpbs [-cbp <-1|0|1>] [-hl] <paramsFile>'
 	echo
 	exit
 }
@@ -45,17 +45,18 @@ function initPBS {
 
 #get args
 while ! [[ -z "$1" ]] ; do
+	if [ -z $2 ] ; then
+		isArg "$1"
+		paramsFile="$1"
+		break
+    fi
 	case $1 in
-		"-p")
-			shift
-			isArg "$1"
-			paramsFile="$1" ;;
 		"-cbp")
 			shift
 			isArg "$1"
 			cbp="$1" ;;
 		"-hl")
-			hl=true ;;
+			hl=false ;;
 		"-h")
 			usage ;;
 		*)
@@ -64,6 +65,10 @@ while ! [[ -z "$1" ]] ; do
 	esac
 	shift
 done
+
+if [ -z "$paramsFile" ] ; then
+    usage
+fi
 
 #get dest and dta dir names
 if [ $(ls -l $wd/*.mzXML 2>/dev/null | wc -l) -gt 0 ] && [ -d dta ] ; then
