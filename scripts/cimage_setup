@@ -10,10 +10,31 @@ function absPath {
 
 
 #displays usage information and exits program
-function usage {
-	echo -e "\nusage: cimsetup [-d <dirrectory>] [-c] [-l]\n"
-	echo -e "\t[--lightFname <dir_name>]\t[--heavyFname <dir_name>]"
+function print_help {
+    echo "cimsetup [<options>] [<dir>]..."
+    echo -e "\nOPTIONAL ARGUMENTS"
+    echo -e "\t-d <dir>"
+    echo -e "\t\tChange destination directory. By default, current directory is used."
+    echo -e "\t-c"
+    echo -e "\t\tCopy .mzXML files to destination dir."
+    echo -e "\t-l {0,1}"
+    echo -e "\t\tMake hard links to .mzXML files. 1 is the default." 
+    echo -e "\t-w <warn_level>"
+    echo -e "\t\tSpecify behavior when no DTASelect-filter files are found in a directory.\n\t\t1 is the default."
+    echo -e "\t\t\t0: Print a warning and continue."
+    echo -e "\t\t\t1: Throw an error and quit."
+    echo -e "\t--lightFname <dir_name>"
+    echo -e "\t\tName to append to light DTASelect-filter file. 'light' is the default."
+	echo -e "\t--heavyFname <dir_name>"
+    echo -e "\t\tName to append to heavy DTASelect-filter file. 'heavy' is the default."
+    echo -e "\nPOSITIONAL ARGUMENTS\n\t[<dir>]...\tPath(s) to sample dirs. If no dir is given, only the current"
+    echo -e "\t\t\tworking dir is used.\n"
 	exit
+}
+
+function usage {
+    echo -e  "usage: cimsetup [<options>] [<dir>]...\n\tuse --help to see a full list of options."
+    exit
 }
 
 #checks that $1 is not empty or a flag
@@ -30,6 +51,8 @@ heavyFname="heavy"
 lightFname="light"
 dtaFname="dta"
 destDir=$wd
+inDirs=()
+warnLevel=1
 
 #get args
 while ! [[ -z "$1" ]] ; do
@@ -60,51 +83,84 @@ while ! [[ -z "$1" ]] ; do
 			shift
 			isArg "$1"
 			lightFname="$1" ;;
+        "-w")
+            shift
+            isArg "$1"
+            warnLevel="$1" ;;
 		"-h")
 			usage ;;
+        "--help")
+            print_help ;;
 		*)
-			echo "$1 is an invalid arg."
-			exit
+            while ! [[ -z "$1" ]] ; do
+                if [[ "$1" == -* ]] ; then
+                   usage 
+                else
+                    temp=$( absPath "$1" ) 
+                    inDirs+=( $temp )
+                fi
+                shift
+            done
 	esac
 	shift
 done
 
-if ! [[ -f $wd/$heavyFname/DTASelect-filter.txt ]] ; then
-	echo "DTAselect-filter files could not be found. Exiting..."
-	exit
+#if no inDirs were given, use current working dir
+if [ ${#inDirs[@]} -eq 0 ]; then
+    inDirs+=( $wd )
 fi
 
-#check if dest dir exists and make it if it does not
-if ! [[ -d $destDir ]] ; then
-	echo "Generating $destDir"
-	mkdir $destDir
-fi
-if ! [[ -d $destDir/$dtaFname ]] ; then
-	mkdir $destDir/$dtaFname
-fi
+goodDir=()
+for d in ${inDirs[@]} ; do
+    if ! [[ -f $d/$heavyFname/DTASelect-filter.txt ]] || ! [[ -f $d/$lightFname/DTASelect-filter.txt ]] ; then
+        case $warnLevel in
+            0) 
+                echo "WARN: DTAselect-filter files could not be found in: $d" ;;
+            1)
+                echo -e "ERROR: DTAselect-filter files could not be found in: $d\nExiting!"
+                exit ;;
+            *)
+                echo -e "$warnLevel is an invalid option for -w\nExiting"
+                exit ;;
+        esac
+        goodDir+=( false )
+    else
+        goodDir+=( true ) 
+    fi
+done    
 
-cd $wd
-f=$(ls *_01.mzXML)
-len=${#f}
-fname=${f::len-9}
-echo "Adding: $fname"
-# for s in $heavyFname $lightFname ; do
-# 	cd $s
-# 	cp DTASelect-filter.txt $destDir/$dtaFname/"DTASelect-filter_"$fname"_"$s".txt"
-# 	cd ..
-# done
-cd $heavyFname
-cp DTASelect-filter.txt $destDir/$dtaFname/"DTASelect-filter_"$fname"_heavy.txt"
-cd $wd
-cd $lightFname
-cp DTASelect-filter.txt $destDir/$dtaFname/"DTASelect-filter_"$fname"_light.txt"
-cd $wd
+for ((i=0;i<${#inDirs[@]};++i)); do
+    if ${goodDir[i]} ; then
+        #check if dest dir exists and make it if it does not
+        if ! [[ -d $destDir ]] ; then
+            echo "Generating $destDir"
+            mkdir $destDir
+        fi
 
-if $copymzXML ; then
-	if $linkMzXMLs ; then
-		ln -f $wd/*.mzXML $destDir
-	else
-		cp $wd/*.mzXML $destDir
-	fi
-fi
+        if ! [[ -d $destDir/$dtaFname ]] ; then
+            mkdir $destDir/$dtaFname
+        fi
+            
+        cd ${inDirs[i]}
+        f=$(ls *_01.mzXML)
+        len=${#f}
+        fname=${f::len-9}
+        echo "Adding: $fname"
+            
+        cd $heavyFname
+        cp DTASelect-filter.txt $destDir/$dtaFname/"DTASelect-filter_"$fname"_heavy.txt"
+        cd ${inDirs[i]}
+        cd $lightFname
+        cp DTASelect-filter.txt $destDir/$dtaFname/"DTASelect-filter_"$fname"_light.txt"
+        cd ${inDirs[i]}
+        
+        if $copymzXML ; then
+            if $linkMzXMLs ; then
+                ln -f ${inDirs[i]}/*.mzXML $destDir
+            else
+            cp ${inDirs[i]}/*.mzXML $destDir
+            fi
+        fi
+    fi
+done
 
