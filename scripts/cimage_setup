@@ -11,12 +11,11 @@ function absPath {
 
 #displays usage information and exits program
 function print_help {
-    echo "cimsetup [<options>] [<dir>]..."
+    echo "cimsetup [<options>]"
+    echo "cimsetup [<options>] <dir> [...] <target>"
     echo -e "\nOPTIONAL ARGUMENTS"
-    echo -e "\t-d <dir>"
-    echo -e "\t\tChange destination directory. By default, current directory is used."
-    echo -e "\t-c"
-    echo -e "\t\tCopy .mzXML files to destination dir."
+    echo -e "\t-c {0,1}"
+    echo -e "\t\tCopy .mzXML files to destination dir. 1 is the default."
     echo -e "\t-l {0,1}"
     echo -e "\t\tMake hard links to .mzXML files. 1 is the default." 
     echo -e "\t-w <warn_level>"
@@ -27,8 +26,9 @@ function print_help {
     echo -e "\t\tName to append to light DTASelect-filter file. 'light' is the default."
 	echo -e "\t--heavyFname <dir_name>"
     echo -e "\t\tName to append to heavy DTASelect-filter file. 'heavy' is the default."
-    echo -e "\nPOSITIONAL ARGUMENTS\n\t[<dir>]...\tPath(s) to sample dirs. If no dir is given, only the current"
+    echo -e "\nPOSITIONAL ARGUMENTS\n\t<dir> [...]\tPath(s) to sample dirs. If no dir is given, only the current"
     echo -e "\t\t\tworking dir is used.\n"
+    echo -e "\t<target>\tPath to target directory.\n"
 	exit
 }
 
@@ -45,24 +45,30 @@ function isArg {
 }
 
 wd=$(pwd)
-copymzXML=false
+copymzXML=true
 linkMzXMLs=true
 heavyFname="heavy"
 lightFname="light"
 dtaFname="dta"
 destDir=$wd
-inDirs=()
+posArgs=()
 warnLevel=1
 
 #get args
 while ! [[ -z "$1" ]] ; do
 	case $1 in
-		"-d")
-			shift
-			isArg "$1"
-			destDir=$(absPath "$1") ;;
 		"-c")
-			copymzXML=true ;;
+            shift
+            isArg "$1"
+			if [ "$1" == "1" ] ; then
+				copymzXML=true
+			elif [ "$1" == "0" ] ; then
+				copymzXML=false
+			else
+				echo "$1 is an invalid option for -c"
+				exit
+			fi
+            ;;
 		"-l")
 			shift
 			isArg "$1"
@@ -97,7 +103,8 @@ while ! [[ -z "$1" ]] ; do
                    usage 
                 else
                     temp=$( absPath "$1" ) 
-                    inDirs+=( $temp )
+                    posArgs+=( "$temp" )
+                    destDir="$temp"
                 fi
                 shift
             done
@@ -105,9 +112,14 @@ while ! [[ -z "$1" ]] ; do
 	shift
 done
 
-#if no inDirs were given, use current working dir
-if [ ${#inDirs[@]} -eq 0 ]; then
+inDirs=()
+#if no posArgs were given, use current working dir
+if [ ${#posArgs[@]} -eq 0 ]; then
     inDirs+=( $wd )
+else
+    for ((i=0;i<${#posArgs[@]}-1;++i)); do
+        inDirs+=( ${posArgs[i]} )
+    done
 fi
 
 goodDir=()
@@ -158,7 +170,7 @@ for ((i=0;i<${#inDirs[@]};++i)); do
             if $linkMzXMLs ; then
                 ln -f ${inDirs[i]}/*.mzXML $destDir
             else
-            cp ${inDirs[i]}/*.mzXML $destDir
+                cp ${inDirs[i]}/*.mzXML $destDir
             fi
         fi
     fi
