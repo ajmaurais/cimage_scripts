@@ -56,7 +56,7 @@ while ! [[ -z "$1" ]] ; do
 			isArg "$1"
 			cbp="$1" ;;
 		"-hl")
-			hl=false ;;
+			hl=true ;;
 		"-h")
 			usage ;;
 		*)
