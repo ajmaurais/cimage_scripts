@@ -116,6 +116,7 @@ inDirs=()
 #if no posArgs were given, use current working dir
 if [ ${#posArgs[@]} -eq 0 ]; then
     inDirs+=( $wd )
+    copymzXML=false
 else
     for ((i=0;i<${#posArgs[@]}-1;++i)); do
         inDirs+=( ${posArgs[i]} )
