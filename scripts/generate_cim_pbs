@@ -38,7 +38,6 @@ function absPath {
 function initPBS {
 	echo '#!/bin/tcsh' > $1/$pbsName
 	echo '#PBS -l mem='$mem'gb,nodes='$nodes':ppn='$ppn',walltime='$walltime >> $1/$pbsName
-	echo -e '\nmodule load base torque sequest python/2.6.8' >> $1/$pbsName
 	echo -e '\ncd '$2'\n' >> $1/$pbsName
 	echo -n 'cimage '$paramsFile' ' >> $1/$pbsName
 }
