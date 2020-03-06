@@ -1,8 +1,8 @@
 # comment lines begin with a '#' in the first position
 
 [SEQUEST]
-#database_name = /home/mauraisa/dbase/Human_uniprot-reviewed_Weerapana_Lab_10202017_rev.fasta
-database_name = /home/mauraisa/dbase/UniProt_mouse_Cravattlab_nonredundant2_98id_11-09-2012_reversed.fasta 
+#database_name = /gsfs1/data2/mauraisa/dbase/Human_uniprot-reviewed_Weerapana_Lab_10202017_rev.fasta
+database_name = /gsfs1/data2/mauraisa/dbase/UniProt_mouse_Cravattlab_nonredundant2_98id_11-09-2012_reversed.fasta 
 
 ppm_peptide_mass_tolerance = 50.000
 isotopes = 1                           ; 0=search only monoisotopic peak, 1=search isotopes

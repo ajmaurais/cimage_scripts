@@ -9,7 +9,9 @@ lightParams=""
 ppdir="$HOME/scripts/cimage_scripts/sequest_params_files"
 qsubAll=false
 qsubAllForce=false
+dontSubmit=false
 linkMs2s=true
+QSUB_ALL_PATH="$HOME/bin/qsub_all"
 
 #displays usage information and exits program
 function usage {
@@ -23,11 +25,13 @@ function usage {
 	echo 's6: Human ReDiMe H L IA H L ox_diffMod'
 	echo 's7: Human IAH IAL azo'
 	echo 's8: Mouse IAH IAL azo'
+	echo 's9: Human IAD4 IAH4 perc ox'
 	echo -e '\nAvailable options:'
 	echo '-l 1 : Create hard links to ms2 files in heavy folder (default).'
 	echo '-l 0 : Do not link .ms2 files, create hard copies instead.'
 	echo -e '\n-qs : Use qsub_all to submit sequest jobs to the queue.'
 	echo '-qsf : Use qsub_all to submit sequest jobs to the queue and pass -f flag.'
+    echo "--dontSubmit : Creates sequest pbs files but don't submit them"
 	echo
 	exit
 }
@@ -78,6 +82,8 @@ while ! [[ -z "$1" ]] ; do
 		"-qsf")
 			qsubAll=true
 			qsubAllForce=true ;;
+        "--dontSubmit")
+            dontSubmit=true ;;
 		"-h")
 			usage;;
 		*)
@@ -141,6 +147,9 @@ case $paramsFiles in
 	"s8")
 		heavyParams="$ppdir/mouse_IAH_IAL_azo/heavy/sequest.params"
 		lightParams="$ppdir/mouse_IAH_IAL_azo/light/sequest.params" ;;
+	"s9")
+		heavyParams="$ppdir/IAD4_IAH4_perc_ox/heavy/sequest.params"
+		lightParams="$ppdir/IAD4_IAH4_perc_ox/light/sequest.params" ;;
 	*)
 		echo "$paramsFiles is not a valid option."
 		exit
@@ -161,17 +170,23 @@ mv *.ms2 $lightName
 cp $heavyParams $heavyName
 cp $lightParams $lightName
 
+qsub_args=""
+if $dontSubmit ; then
+    qsub_args="--dontSubmit"
+fi
+if $qsubAllForce ; then
+    qsub_args="${qsub_args} -f"
+fi
+
 if $qsubAll ; then
 	cd "$wd"
 	for d in $heavyName $lightName ; do
 		cd $d
-		if $qsubAllForce ; then
-			qsub_all -f
-		else
-			qsub_all	
-		fi
+        echo $QSUB_ALL_PATH "$qsub_args"
+        $QSUB_ALL_PATH $qsub_args
 		cd ..
 	done
 fi
 
-echo "Sucess!"
+echo "Success!"
+

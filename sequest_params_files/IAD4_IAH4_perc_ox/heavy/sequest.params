@@ -20,7 +20,7 @@ xcorr_mode = 0                         ; 0 regular Xcorr(default), 1 - EE, 2 - E
 #
 # Up to 3 differential searches can be performed.
 # Amino acids can not appear in more than one differential search parameter
-# diff_search_options = 258.1481 C
+# diff_search_options = 312.16819 C
 
 #
 # new parameters
@@ -60,7 +60,7 @@ add_S_Serine = 0.0000                  ; added to S - avg.  87.0782, mono.  87.0
 add_P_Proline = 0.0000                 ; added to P - avg.  97.1167, mono.  97.05276
 add_V_Valine = 0.0000                  ; added to V - avg.  99.1326, mono.  99.06841
 add_T_Threonine = 0.0000               ; added to T - avg. 101.1051, mono. 101.04768
-add_C_Cysteine =  57.02146             ; added to C - avg. 103.1388, mono. 103.00919
+add_C_Cysteine =  61.04576             ; added to C - avg. 103.1388, mono. 103.00919
 add_L_Leucine = 0.0000                 ; added to L - avg. 113.1594, mono. 113.08406
 add_I_Isoleucine = 0.0000              ; added to I - avg. 113.1594, mono. 113.08406
 add_X_LorI = 0.0000                    ; added to X - avg. 113.1594, mono. 113.08406
@@ -69,13 +69,13 @@ add_O_Ornithine = 0.0000               ; added to O - avg. 114.1472, mono  114.0
 add_B_avg_NandD = 0.0000               ; added to B - avg. 114.5962, mono. 114.53494
 add_D_Aspartic_Acid = 0.0000           ; added to D - avg. 115.0886, mono. 115.02694
 add_Q_Glutamine = 0.0000               ; added to Q - avg. 128.1307, mono. 128.05858
-add_K_Lysine = 6.02013                 ; added to K - avg. 128.1741, mono. 128.09496
+add_K_Lysine = 0.0000                  ; added to K - avg. 128.1741, mono. 128.09496
 add_Z_avg_QandE = 0.0000               ; added to Z - avg. 128.6231, mono. 128.55059
 add_E_Glutamic_Acid = 0.0000           ; added to E - avg. 129.1155, mono. 129.04259
 add_M_Methionine = 0.0000              ; added to M - avg. 131.1926, mono. 131.04049
 add_H_Histidine = 0.0000               ; added to H - avg. 137.1411, mono. 137.05891
 add_F_Phenyalanine = 0.0000            ; added to F - avg. 147.1766, mono. 147.06841
-add_R_Arginine = 10.00826              ; added to R - avg. 156.1875, mono. 156.10111
+add_R_Arginine = 0.0000                ; added to R - avg. 156.1875, mono. 156.10111
 add_Y_Tyrosine = 0.0000                ; added to Y - avg. 163.1760, mono. 163.06333
 add_W_Tryptophan = 0.0000              ; added to W - avg. 186.2132, mono. 186.07931
 
