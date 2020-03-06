@@ -155,9 +155,10 @@ for ((i=0;i<${#inDirs[@]};++i)); do
         fi
             
         cd ${inDirs[i]}
-        f=$(ls *_01.mzXML)
+        # f=$(ls *_01.mzXML)
+        f=$(basename "$heavyFname"/*_01.ms2)
         len=${#f}
-        fname=${f::len-9}
+        fname=${f::len-7}
         echo "Adding: $fname"
             
         cd $heavyFname
