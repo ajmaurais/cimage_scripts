@@ -9,7 +9,9 @@ lightParams=""
 ppdir="$HOME/scripts/cimage_scripts/sequest_params_files"
 qsubAll=false
 qsubAllForce=false
+dontSubmit=false
 linkMs2s=true
+QSUB_ALL_PATH="$HOME/bin/qsub_all"
 
 #displays usage information and exits program
 function usage {
@@ -29,6 +31,7 @@ function usage {
 	echo '-l 0 : Do not link .ms2 files, create hard copies instead.'
 	echo -e '\n-qs : Use qsub_all to submit sequest jobs to the queue.'
 	echo '-qsf : Use qsub_all to submit sequest jobs to the queue and pass -f flag.'
+    echo "--dontSubmit : Creates sequest pbs files but don't submit them"
 	echo
 	exit
 }
@@ -79,6 +82,8 @@ while ! [[ -z "$1" ]] ; do
 		"-qsf")
 			qsubAll=true
 			qsubAllForce=true ;;
+        "--dontSubmit")
+            dontSubmit=true ;;
 		"-h")
 			usage;;
 		*)
@@ -165,17 +170,23 @@ mv *.ms2 $lightName
 cp $heavyParams $heavyName
 cp $lightParams $lightName
 
+qsub_args=""
+if $dontSubmit ; then
+    qsub_args="--dontSubmit"
+fi
+if $qsubAllForce ; then
+    qsub_args="${qsub_args} -f"
+fi
+
 if $qsubAll ; then
 	cd "$wd"
 	for d in $heavyName $lightName ; do
 		cd $d
-		if $qsubAllForce ; then
-			qsub_all -f
-		else
-			qsub_all	
-		fi
+        echo $QSUB_ALL_PATH "$qsub_args"
+        $QSUB_ALL_PATH $qsub_args
 		cd ..
 	done
 fi
 
-echo "Sucess!"
+echo "Success!"
+
