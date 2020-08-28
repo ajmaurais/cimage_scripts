@@ -13,6 +13,7 @@ if [ -d dta ]; then
 	rm -fv findMs1AcrossSetsFromDTASelect.Rout
 	rm -fv ./*.txt.tagged
 	rm -fv ./*.txt.tmp*
+    rm -fv ./*.tmp.scan
 	rm -fv ./tmp.*	
 	rm -rf Rplots.pdf
 	echo "Removing output..."
