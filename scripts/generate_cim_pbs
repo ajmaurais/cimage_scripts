@@ -38,9 +38,9 @@ function absPath {
 function initPBS {
 	echo '#!/bin/tcsh' > $1/$pbsName
 	echo '#PBS -l mem='$mem'gb,nodes='$nodes':ppn='$ppn',walltime='$walltime >> $1/$pbsName
-	echo 'module load netcdf/gcc/64/4.4.0' >> $1/$pbsName
+	echo 'module load netcdf/gcc/64/4.5.0' >> $1/$pbsName
 	echo -e '\ncd '$2'\n' >> $1/$pbsName
-	echo -n 'cimage '$paramsFile' ' >> $1/$pbsName
+    echo -n 'cimage '$paramsFile' ' >> $1/$pbsName
 }
 
 #get args
