@@ -15,7 +15,7 @@ function print_help {
     echo "cimsetup [<options>] <dir> [...] <target>"
     echo -e "\nOPTIONAL ARGUMENTS"
     echo -e "\t-c {0,1}"
-    echo -e "\t\tCopy .mzXML files to destination dir. 1 is the default."
+    echo -e "\t\tCopy .mzXML files to destination dir. 0 is the default."
     echo -e "\t-l {0,1}"
     echo -e "\t\tMake hard links to .mzXML files. 1 is the default." 
     echo -e "\t-w <warn_level>"
@@ -45,7 +45,7 @@ function isArg {
 }
 
 wd=$(pwd)
-copymzXML=true
+copymzXML=false
 linkMzXMLs=true
 heavyFname="heavy"
 lightFname="light"
