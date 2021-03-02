@@ -39,7 +39,7 @@ function initPBS {
 	echo '#!/bin/tcsh' > $1/$pbsName
 	echo '#PBS -l mem='$mem'gb,nodes='$nodes':ppn='$ppn',walltime='$walltime >> $1/$pbsName
 	echo -e '\ncd '$2'\n' >> $1/$pbsName
-    echo -n 'cimage '$paramsFile' ' >> $1/$pbsName
+    echo -n "$CIMAGE_PATH/"'cimage '$paramsFile' ' >> $1/$pbsName
 }
 
 #get args
@@ -100,9 +100,9 @@ echo -e 'cd ..\n' >> $destDir/$pbsName
 
 case $cbp in
 	"1")
-		echo -e 'cimage_combine by_protein output_rt_10_sn_2.5.to_excel.txt dta\n' >> $destDir/$pbsName ;;
+		echo -e "$CIMAGE_PATH/"'cimage_combine by_protein output_rt_10_sn_2.5.to_excel.txt dta\n' >> $destDir/$pbsName ;;
 	"0")
-		echo -e 'cimage_combine output_rt_10_sn_2.5.to_excel.txt dta\n' >> $destDir/$pbsName ;;
+		echo -e "$CIMAGE_PATH/"'cimage_combine output_rt_10_sn_2.5.to_excel.txt dta\n' >> $destDir/$pbsName ;;
 	"-1")
 		exit ;;
 	*)
